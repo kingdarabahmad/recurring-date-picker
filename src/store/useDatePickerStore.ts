@@ -61,7 +61,7 @@ const calculatePreviewDates = (
     if (!recurrenceType || !validateDate(startDate)) return [startDate]
     
     const dates: Date[] = []
-    const maxPreviewDates = 10
+    const maxPreviewDates = endDate ? Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 3600 * 24)) : Infinity;
     
     if (recurrenceType === 'weekly' && selectedDays.length > 0) {
       let currentDate = startDate

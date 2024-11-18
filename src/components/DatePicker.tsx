@@ -36,6 +36,8 @@ function MiniCalendar({ selectedDates }: { selectedDates: Date[] }) {
   const monthEnd = endOfMonth(currentMonth)
   const monthDays = eachDayOfInterval({ start: monthStart, end: monthEnd })
 
+  console.log("selectedDates",selectedDates)
+
   const isDateSelected = (date: Date) => {
     return selectedDates.some(selectedDate => isSameDay(selectedDate, date))
   }
