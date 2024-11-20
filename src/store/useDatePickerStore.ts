@@ -48,7 +48,7 @@ const validateDateRange = (startDate: Date, endDate: Date | null): boolean => {
   return isValid(endDate) && !isBefore(endDate, startDate)
 }
 
-const DEFAULT_PREVIEW_LIMIT = 100 // Show next 10 occurrences when no end date
+const DEFAULT_PREVIEW_LIMIT = 100 
 
 const calculatePreviewDates = (
   startDate: Date,
