@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { format, isValid, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isSameDay, addMonths, subMonths } from 'date-fns'
+import { format, isValid, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isSameDay, addMonths, subMonths, startOfWeek, getDay } from 'date-fns'
 import { Calendar as CalendarIcon, AlertCircle, ChevronLeft, ChevronRight, ArrowUpDown, ChevronDown, ChevronUp } from 'lucide-react'
 import { useDatePickerStore } from '../store/useDatePickerStore'
 
@@ -35,12 +35,16 @@ function MiniCalendar({ selectedDates }: { selectedDates: Date[] }) {
   const monthStart = startOfMonth(currentMonth)
   const monthEnd = endOfMonth(currentMonth)
   const monthDays = eachDayOfInterval({ start: monthStart, end: monthEnd })
-
-  console.log("selectedDates",selectedDates)
+  const firstDayOfMonth = getDay(monthStart)
 
   const isDateSelected = (date: Date) => {
     return selectedDates.some(selectedDate => isSameDay(selectedDate, date))
   }
+
+  // Create array of empty cells for days before the first day of month
+  const emptyDays = Array(firstDayOfMonth).fill(null)
+  // Combine empty days with month days
+  const allDays = [...emptyDays, ...monthDays]
 
   return (
     <div className="bg-white rounded-lg shadow p-4">
@@ -68,8 +72,13 @@ function MiniCalendar({ selectedDates }: { selectedDates: Date[] }) {
           </div>
         ))}
       </div>
+        
       <div className="grid grid-cols-7 gap-1">
-        {monthDays.map((day, index) => {
+        {allDays.map((day, index) => {
+          if (!day) {
+            return <div key={`empty-${index}`} className="aspect-square" />
+          }
+          
           const isSelected = isDateSelected(day)
           return (
             <div
@@ -378,7 +387,7 @@ export function DatePicker() {
                 <label className="block text-sm font-semibold text-slate-700 tracking-wider">
                   Calendar Preview
                 </label>
-                <MiniCalendar  selectedDates={previewDates} />
+                <MiniCalendar selectedDates={previewDates} />
 
                 <div className="space-y-2">
                   <label className="block text-sm font-semibold tracking-wider text-slate-700">

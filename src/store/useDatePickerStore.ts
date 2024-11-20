@@ -48,6 +48,8 @@ const validateDateRange = (startDate: Date, endDate: Date | null): boolean => {
   return isValid(endDate) && !isBefore(endDate, startDate)
 }
 
+const DEFAULT_PREVIEW_LIMIT = 100 // Show next 10 occurrences when no end date
+
 const calculatePreviewDates = (
   startDate: Date,
   recurrenceType: RecurrenceType | null,
@@ -61,8 +63,10 @@ const calculatePreviewDates = (
     if (!recurrenceType || !validateDate(startDate)) return [startDate]
     
     const dates: Date[] = []
-    const maxPreviewDates = endDate ? Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 3600 * 24)) : Infinity;
-    
+    const maxPreviewDates = endDate 
+      ? Math.min(Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 3600 * 24)), DEFAULT_PREVIEW_LIMIT)
+      : DEFAULT_PREVIEW_LIMIT;
+
     if (recurrenceType === 'weekly' && selectedDays.length > 0) {
       let currentDate = startDate
       let weekStart = startOfWeek(currentDate)
@@ -77,6 +81,7 @@ const calculatePreviewDates = (
         }
         weekStart = addWeeks(weekStart, interval)
         currentDate = weekStart
+        if (dates.length >= maxPreviewDates) break
       }
       
       return dates.sort((a, b) => a.getTime() - b.getTime())
@@ -104,6 +109,8 @@ const calculatePreviewDates = (
           currentDate = addYears(currentDate, interval)
           break
       }
+      
+      if (dates.length >= maxPreviewDates) break
     }
     
     return dates
